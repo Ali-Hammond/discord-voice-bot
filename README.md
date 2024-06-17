@@ -1,2 +1,1 @@
-# ali-bot
- 
+**This code is VERY Un-optimized, buggy, and it crashes frequently. This is here for a proof of concept.**
