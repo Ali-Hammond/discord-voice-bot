@@ -26,6 +26,13 @@ stop_listening = False
 async def on_ready():
     print(f'Logged in as {bot.user}')
 
+    try:
+        synced = await bot.tree.sync()
+        print(f'Synced {len(synced)} commands')
+
+    except Exception as e:
+        print(e)
+        
 @bot.tree.command(name='join', description='Makes the Bot join a VC')
 async def join(interaction: discord.Interaction):
     if interaction.user.voice:
@@ -45,6 +52,16 @@ async def leave(interaction: discord.Interaction):
         await interaction.response.send_message("Left the voice channel!")
     else:
         await interaction.response.send_message("I'm not in a voice channel.")
+
+@bot.tree.command(name='stopmusic', description='Makes the Bot stop playing music')
+async def leave(interaction: discord.Interaction):
+    for guild in bot.guilds:
+        if interaction.guild.voice_client:
+            voice_client = discord.utils.get(bot.voice_clients, guild=guild)
+            voice_client.stop()
+            await interaction.response.send_message("Stopped the music!")
+        else:
+            await interaction.response.send_message("I'm not in a voice channel.")
 
 async def listen_loop(interaction):
     global last_transcribed_text, listening, stop_listening
@@ -67,6 +84,8 @@ async def listen_loop(interaction):
                         text = recognizer.recognize_google(audio_data)
                         print("Transcribed text:", text)
                         last_transcribed_text = text
+                        
+                        # Check for different commands to play specific songs
                         if "rick roll" in text.lower():
                             await play_music1(interaction)
 
@@ -76,7 +95,7 @@ async def listen_loop(interaction):
                         elif "music three" in text.lower() or "music 3" in text.lower():
                             await play_music3(interaction)
 
-                        elif "whoa man man" in text.lower():
+                        elif "do you know who i am" in text.lower():
                             await play_music4(interaction)
 
                         elif "music 5" in text.lower() or "music five" in text.lower():
@@ -85,9 +104,6 @@ async def listen_loop(interaction):
                         elif "leave vc" in text.lower():
                             await interaction.guild.voice_client.disconnect()
                             await interaction.response.send_message("Left the voice channel!")
-
-                        elif "stop music" in text.lower():
-                            voice_client.stop()  # Stop the currently playing audio
 
                         else:
                             await send_heard_message(text, interaction)
@@ -99,6 +115,13 @@ async def listen_loop(interaction):
                     except sr.RequestError as e:
                         print(f"Could not request results from Google Web Speech API; {e}")
                         last_transcribed_text = "Sorry, there was an error processing your request."
+                
+                # Pause listening while music is playing
+                while voice_client.is_playing():
+                    await asyncio.sleep(1)  # Wait for 1 second
+                
+                # Resume listening after music stops
+                await asyncio.sleep(1)  # Ensure a small delay before resuming to avoid race conditions
 
 async def send_heard_message(text, interaction):
     target_channel = bot.get_channel(target_channel_id)
