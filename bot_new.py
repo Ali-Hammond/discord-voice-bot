@@ -5,6 +5,7 @@ import speech_recognition as sr
 import asyncio
 from pytube import YouTube
 import os
+from dotenv import load_dotenv
 
 intents = discord.Intents.all()
 bot = commands.Bot(command_prefix='!', intents=intents)
@@ -228,8 +229,11 @@ async def play_music5(interaction: discord.Interaction):
         
     except Exception as e:
         print(e)
+load_dotenv('TOKEN.env')
+
+RUNTOKEN = os.getenv("TOKEN")
 
 try:
-    bot.run('MTIyNjgzNTU1OTY4MzU5MjIwMw.GbbvGH.qg3LX5c8wB7Y-s1Kse9Vv3Tg4tFrR1UIkEDr9Y')
+    bot.run(RUNTOKEN)
 except KeyboardInterrupt:
     print("Bot interrupted by user")
