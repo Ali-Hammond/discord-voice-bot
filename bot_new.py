@@ -7,7 +7,6 @@ from pytube import YouTube
 import os
 from dotenv import load_dotenv
 
-
 intents = discord.Intents.all()
 bot = commands.Bot(command_prefix='!', intents=intents)
 
