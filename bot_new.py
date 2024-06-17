@@ -7,6 +7,7 @@ from pytube import YouTube
 import os
 from dotenv import load_dotenv
 
+
 intents = discord.Intents.all()
 bot = commands.Bot(command_prefix='!', intents=intents)
 
@@ -32,7 +33,7 @@ async def on_ready():
 
     except Exception as e:
         print(e)
-        
+
 @bot.tree.command(name='join', description='Makes the Bot join a VC')
 async def join(interaction: discord.Interaction):
     if interaction.user.voice:
