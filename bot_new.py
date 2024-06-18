@@ -86,7 +86,7 @@ async def listen_loop(interaction):
                         last_transcribed_text = text
                         
                         # Check for different commands to play specific songs
-                        if "rick roll" in text.lower():
+                        if "do a funny" in text.lower():
                             await play_music1(interaction)
 
                         elif "music two" in text.lower() or "music 2" in text.lower():
